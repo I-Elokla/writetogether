@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String     // ← new display‑name column
+  password  String
+  createdAt DateTime   @default(now())
+  documents Document[] @relation("UserDocuments")
+}
+
+model Document {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  title      String   
+  ownerEmail String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation("UserDocuments", fields: [ownerEmail], references: [email])
+}
